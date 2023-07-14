@@ -1,11 +1,23 @@
 import 'package:chat_ipssi/controller/auth_controller.dart';
+import 'package:chat_ipssi/controller/auth_gate_controller.dart';
+import 'package:chat_ipssi/controller/auth_service_controller.dart';
 import 'package:chat_ipssi/view/login_view.dart';
 import 'package:chat_ipssi/view/register_view.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
-    MaterialApp(home: MyApp()),
+    ChangeNotifierProvider(
+      create: (context) => AuthServiceController(),
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -16,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthController(),
+      home: AuthGateController(),
     );
   }
 }

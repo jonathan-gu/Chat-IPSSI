@@ -1,4 +1,7 @@
+import 'package:chat_ipssi/controller/auth_service_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegisterView extends StatefulWidget {
   final void Function()? onTap;
@@ -9,9 +12,29 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  TextEditingController mail = TextEditingController();
-  TextEditingController pseudo = TextEditingController();
-  TextEditingController password = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController pseudoController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void signUp() async {
+    final authService = Provider.of<AuthServiceController>(context, listen:false);
+
+    try {
+      await authService.signUpWithEmailAndPasswordAndPseudo(
+        emailController.text,
+        passwordController.text,
+        pseudoController.text
+      );
+    } catch (exception) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            exception.toString()
+          )
+        )
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +47,15 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             children: [
               const SizedBox(height: 200),
-              const  Text(
-                'Inscription',
+              const Text(
+                'Chat IPSSI',
                 style: TextStyle(color: Colors.white, fontSize: 40),
               ),
               const SizedBox(height: 40),
               SizedBox(
                 width: 350,
                 child: TextField(
-                  controller: mail,
+                  controller: emailController,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     fillColor: Colors.white,
@@ -45,7 +68,7 @@ class _RegisterViewState extends State<RegisterView> {
               SizedBox(
                 width: 350,
                 child: TextField(
-                  controller: pseudo,
+                  controller: pseudoController,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     fillColor: Colors.white,
@@ -58,31 +81,35 @@ class _RegisterViewState extends State<RegisterView> {
               SizedBox(
                 width: 350,
                 child: TextField(
-                  controller: password,
+                  controller: passwordController,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     fillColor: Colors.white,
                     filled: true,
                     hintText: 'Mot de passe',
                   ),
+                  obscureText: true,
                 ),
               ),
               const SizedBox(height: 40),
-              const SizedBox(
+              SizedBox(
                 height: 50,
                 width: 200,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    foregroundColor: MaterialStatePropertyAll(Colors.white),
-                    backgroundColor: MaterialStatePropertyAll(Colors.black),
-                  ),
-                  onPressed: null,
-                  child: Text(
-                    "S'inscrire",
-                    style: TextStyle(
-                      fontSize: 18
+                child: GestureDetector(
+                  onTap: signUp,
+                  child: const ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStatePropertyAll(Colors.white),
+                      backgroundColor: MaterialStatePropertyAll(Colors.black),
                     ),
-                  )
+                    onPressed: null,
+                    child: Text(
+                      "S'inscrire",
+                      style: TextStyle(
+                        fontSize: 18
+                      ),
+                    )
+                  ),
                 )
               ),
               const SizedBox(height: 20),
